@@ -1,0 +1,12 @@
+[submodule "submodules/beeb"]
+	path = submodules/beeb
+	url = https://github.com/tom-seddon/beeb
+[submodule "submodules/shellcmd.py"]
+	path = submodules/shellcmd.py
+	url = https://github.com/tom-seddon/shellcmd.py
+[submodule "submodules/vgm-packer"]
+	path = submodules/vgm-packer
+	url = https://github.com/tom-seddon/vgm-packer
+[submodule "submodules/vgm-player-bbc"]
+	path = submodules/vgm-player-bbc
+	url = https://github.com/tom-seddon/vgm-player-bbc

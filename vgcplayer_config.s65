@@ -1,0 +1,4 @@
+; -*- beebasm -*-
+
+ENABLE_HUFFMAN = TRUE
+ENABLE_VGM_FX = TRUE

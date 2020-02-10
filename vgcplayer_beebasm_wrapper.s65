@@ -1,0 +1,22 @@
+; -*- beebasm -*-
+
+include "vgcplayer_config.s65"
+
+org $0
+guard $fc
+
+include "submodules/vgm-player-bbc/lib/vgcplayer.h.asm"
+.vgcplayer_zp_end
+
+org $400
+guard $800
+
+.vgcplayer_start
+include "submodules/vgm-player-bbc/lib/vgcplayer.asm"
+.vgcplayer_end
+
+save "vgmplay",vgcplayer_start,vgcplayer_end
+
+print "output::vgcplayer_zp_end=",~vgcplayer_zp_end
+print "output::vgm_init=",~vgm_init
+print "output::vgm_update=",~vgm_update

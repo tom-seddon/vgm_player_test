@@ -1,0 +1,5 @@
+*=$4000
+synerg2_stream4:
+                .binary "build/SYNERG2.streams.4.vgc"
+                .cerror *>$7400,"main RAM overflow"
+                

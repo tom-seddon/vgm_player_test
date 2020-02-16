@@ -38,8 +38,33 @@ build:
 	$(PYTHON) $(BEEB_BIN)/ssd_extract.py -o $(BUILD)/ $(BUILD)/vgcplayer.ssd
 	$(SHELLCMD) copy-file $(BUILD)/vgcplayer/0/\$$.vgmplay $(BEEB)/
 	$(SHELLCMD) copy-file $(BUILD)/vgcplayer/0/\$$.vgmplay.inf $(BEEB)/
-	$(MAKE) _assemble SRC=vgcplayer_test BBC=vgctest
-	$(PYTHON) $(BEEB_BIN)/ssd_create.py -o $(BUILD)/vgm_player_test.ssd $(BEEB)/@.vgctest $(BEEB)/$$.vgmplay --build "*LOAD VGMPLAY" --build "*RUN @.VGCTEST"
+	$(MAKE) $(BUILD)/U_LOADER.vgc
+	$(MAKE) $(BUILD)/U_LOADER.streams.vgc
+	$(MAKE) $(BUILD)/SYNERG2.streams.vgc
+	$(MAKE) _assemble SRC=vgcplayer_test BBC=vgc
+	$(MAKE) _assemble SRC=synerg2_bank4 BBC=syn2_4
+	$(MAKE) _assemble SRC=synerg2_bank5 BBC=syn2_5
+	$(MAKE) _assemble SRC=synerg2_bank6 BBC=syn2_6
+	$(MAKE) _assemble SRC=synerg2_bank7 BBC=syn2_7
+	$(MAKE) _assemble SRC=synerg2_main BBC=syn2_m
+	$(MAKE) _assemble SRC=vgcplayer_streams_test BBC=vgcstr
+
+	$(PYTHON) $(BEEB_BIN)/ssd_create.py -o $(BUILD)/vgm_player_test.ssd $(BEEB)/@.* $(BEEB)/$$.vgmplay --build "*LOAD VGMPLAY" --build "*RUN @.VGC"
+
+	$(PYTHON) $(BEEB_BIN)/ssd_create.py -o $(BUILD)/vgm_streams_player_test.ssd $(BEEB)/@.* $(BEEB)/$$.vgmplay --build "*SRLOAD @.syn2_4 8000 4 Q" --build "*SRLOAD @.syn2_5 8000 5 Q" --build "*SRLOAD @.syn2_6 8000 6 Q" --build "*SRLOAD @.syn2_7 8000 7 Q" --build "*LOAD @.syn2_m" --build "*LOAD VGMPLAY" --build "*RUN @.VGCSTR"
+
+$(BUILD)/%.vgc : ./vgms/%.vgm
+	$(PYTHON) submodules/vgm-packer/vgmpacker.py -o $@ $<
+
+$(BUILD)/%.streams.vgc $(BUILD)/%.streams.0.vgc $(BUILD)/%.streams.1.vgc $(BUILD)/%.streams.2.vgc $(BUILD)/%.streams.3.vgc $(BUILD)/%.streams.4.vgc $(BUILD)/%.streams.5.vgc $(BUILD)/%.streams.6.vgc $(BUILD)/%.streams.7.vgc  : ./vgms/%.vgm
+	$(PYTHON) submodules/vgm-packer/vgmpacker.py -s -o $@ $<
+
+##########################################################################
+##########################################################################
+
+.PHONY:clean
+clean:
+	$(SHELLCMD) rm-tree $(BUILD)
 
 ##########################################################################
 ##########################################################################
@@ -53,9 +78,11 @@ _assemble:
 ##########################################################################
 
 .PHONY:test_b2
+test_b2: SSD=vgm_streams_player_test
+#test_b2: SSD=vgm_player_test
 test_b2:
 	curl -G 'http://localhost:48075/reset/b2' --data-urlencode "config=Master 128 (MOS 3.20)"
-	curl -H 'Content-Type:application/binary' --upload-file '$(BUILD)/vgm_player_test.ssd' 'http://localhost:48075/run/b2?name=vgm_player_test.ssd'
+	curl -H 'Content-Type:application/binary' --upload-file '$(BUILD)/$(SSD).ssd' 'http://localhost:48075/run/b2?name=$(SSD).ssd'
 
 ##########################################################################
 ##########################################################################

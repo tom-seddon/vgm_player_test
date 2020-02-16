@@ -8,8 +8,8 @@ guard $fc
 include "submodules/vgm-player-bbc/lib/vgcplayer.h.asm"
 .vgcplayer_zp_end
 
-org $400
-guard $800
+org $1100
+guard $1500
 
 .vgcplayer_start
 include "submodules/vgm-player-bbc/lib/vgcplayer.asm"

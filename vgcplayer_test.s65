@@ -5,9 +5,11 @@
 
 *=vgcplayer_zp_end
                 .dsection zp
+                .cerror $>$fc,'zp overrun'
 
-*=$1100
+*=$1500
                 .dsection code
+                .cerror *>$7400,'code overrun'
 
 ;-------------------------------------------------------------------------
 
@@ -19,9 +21,33 @@
                 .section code
 
 main:
-                lda #65
-                jsr oswrch
+                sec             ;looped playback
+                lda #$74        ;2 KB buffer
+                ldx #<vgc
+                ldy #>vgc
+                jsr vgm_init
+
+                sei
+                
+loop:
+                lda #2
+-
+                bit $fe4d
+                beq -
+
+                sta $fe4d
+
+                lda #1
+                jsr vgm_update
+
+                jmp loop
+                
                 rts
+
+vgc:
+                .binary "build/U_LOADER.vgc"
+                ;.binary "submodules/vgm-player-bbc/music/vgc/ym_009.vgc"
+                
                 .send code
 
 ;-------------------------------------------------------------------------

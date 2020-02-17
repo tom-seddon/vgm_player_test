@@ -41,17 +41,27 @@ build:
 	$(MAKE) $(BUILD)/U_LOADER.vgc
 	$(MAKE) $(BUILD)/U_LOADER.streams.vgc
 	$(MAKE) $(BUILD)/SYNERG2.streams.vgc
+	$(MAKE) $(BUILD)/icepalace.streams.vgc
+	$(MAKE) $(BUILD)/u_menu.streams.vgc
 	$(MAKE) _assemble SRC=vgcplayer_test BBC=vgc
 	$(MAKE) _assemble SRC=synerg2_bank4 BBC=syn2_4
 	$(MAKE) _assemble SRC=synerg2_bank5 BBC=syn2_5
 	$(MAKE) _assemble SRC=synerg2_bank6 BBC=syn2_6
 	$(MAKE) _assemble SRC=synerg2_bank7 BBC=syn2_7
 	$(MAKE) _assemble SRC=synerg2_main BBC=syn2_m
-	$(MAKE) _assemble SRC=vgcplayer_streams_test BBC=vgcstr
+
+	$(MAKE) _assemble SRC=icepalace_bank4 BBC=ice_4
+	$(MAKE) _assemble SRC=icepalace_bank5 BBC=ice_5
+
+	$(MAKE) _assemble SRC=vgcplayer_streams_synerg2 BBC=syn2
+
+	$(MAKE) _assemble SRC=vgcplayer_streams_icepalace BBC=ice
 
 	$(PYTHON) $(BEEB_BIN)/ssd_create.py -o $(BUILD)/vgm_player_test.ssd $(BEEB)/@.* $(BEEB)/$$.vgmplay --build "*LOAD VGMPLAY" --build "*RUN @.VGC"
 
-	$(PYTHON) $(BEEB_BIN)/ssd_create.py -o $(BUILD)/vgm_streams_player_test.ssd $(BEEB)/@.* $(BEEB)/$$.vgmplay --build "*SRLOAD @.syn2_4 8000 4 Q" --build "*SRLOAD @.syn2_5 8000 5 Q" --build "*SRLOAD @.syn2_6 8000 6 Q" --build "*SRLOAD @.syn2_7 8000 7 Q" --build "*LOAD @.syn2_m" --build "*LOAD VGMPLAY" --build "*RUN @.VGCSTR"
+	$(PYTHON) $(BEEB_BIN)/ssd_create.py -o $(BUILD)/vgcplayer_streams_synerg2.ssd $(BEEB)/@.* $(BEEB)/$$.vgmplay --build "*SRLOAD @.syn2_4 8000 4 Q" --build "*SRLOAD @.syn2_5 8000 5 Q" --build "*SRLOAD @.syn2_6 8000 6 Q" --build "*SRLOAD @.syn2_7 8000 7 Q" --build "*LOAD @.syn2_m" --build "*LOAD VGMPLAY" --build "*RUN @.syn2"
+
+	$(PYTHON) $(BEEB_BIN)/ssd_create.py -o $(BUILD)/vgcplayer_streams_icepalace.ssd $(BEEB)/@.* $(BEEB)/$$.vgmplay --build "*SRLOAD @.ice_4 8000 4 Q" --build "*SRLOAD @.ice_5 8000 5 Q" --build "*LOAD VGMPLAY" --build "*RUN @.ice"
 
 $(BUILD)/%.vgc : ./vgms/%.vgm
 	$(PYTHON) submodules/vgm-packer/vgmpacker.py -o $@ $<
@@ -78,7 +88,7 @@ _assemble:
 ##########################################################################
 
 .PHONY:test_b2
-test_b2: SSD=vgm_streams_player_test
+test_b2: SSD=vgcplayer_streams_icepalace
 #test_b2: SSD=vgm_player_test
 test_b2:
 	curl -G 'http://localhost:48075/reset/b2' --data-urlencode "config=Master 128 (MOS 3.20)"

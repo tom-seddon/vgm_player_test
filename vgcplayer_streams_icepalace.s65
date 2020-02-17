@@ -1,0 +1,92 @@
+                .include "submodules/beeb/include/beeb.s65"
+                .include "build/vgcplayer_inc.s65"
+                .include "build/icepalace_bank4.sym"
+                .include "build/icepalace_bank5.sym"
+
+;-------------------------------------------------------------------------
+
+*=vgcplayer_zp_end
+                .dsection zp
+                .cerror $>$fc,'zp overrun'
+
+*=$1500
+                .dsection code
+                .cerror *>$4000,'code overrun'
+
+;-------------------------------------------------------------------------
+
+                .section zp
+vsync_count:
+                .fill 1
+                .send zp
+
+;-------------------------------------------------------------------------
+
+                .section code
+
+main:
+                sta $fffe       ;start b2 trace
+
+                lda #0
+                sta vsync_count
+                
+                sec             ;looped playback
+                lda #$74        ;2 KB buffer
+                ldx #<vgc
+                ldy #>vgc
+                jsr vgm_init
+
+                sei
+                
+loop:
+                lda #2
+-
+                bit $fe4d
+                beq -
+
+                sta $fe4d
+
+                lda #1
+                jsr vgm_update
+
+                inc vsync_count
+                lda vsync_count
+                cmp #50
+                bcc loop
+
+                sta $ffff       ;stop b2 trace
+
+                jmp loop
+                
+                rts
+
+vgc:
+                .binary "build/ICEPALACE.streams.vgc"
+
+                .byte 4
+                .word icepalace_stream0
+
+                .byte 4
+                .word icepalace_stream1
+
+                .byte 5
+                .word icepalace_stream2
+
+                .byte 4
+                .word icepalace_stream3
+
+                .byte 4
+                .word icepalace_stream4
+
+                .byte 5
+                .word icepalace_stream5
+
+                .byte 5
+                .word icepalace_stream6
+
+                .byte 4
+                .word icepalace_stream7
+                
+                .send code
+
+;-------------------------------------------------------------------------

@@ -1,0 +1,9 @@
+*=$8000
+icepalace_stream2:
+                .binary "build/icepalace.streams.2.vgc"
+icepalace_stream5:
+                .binary "build/icepalace.streams.5.vgc"
+icepalace_stream6:
+                .binary "build/icepalace.streams.6.vgc"
+                .cerror *>$c000,"bank 4 overflow"
+                

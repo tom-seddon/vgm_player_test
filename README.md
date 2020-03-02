@@ -27,9 +27,9 @@ You'll get `build/vgm_player_test.ssd`, that plays Ikari Union (Jeroen
 Tel/Mad Max) using the standard VGC player. The music data is quite
 small and fits entirely in main RAM.
 
-You'll also get `build/vgm_streams_player_test.ssd`, that plays Wicked
-Polygons Part 2 (Scavenger) using the stream-oriented VGC player. The
-music data is 67 KB, occupying 4 sideways RAM banks and a bit of main
-RAM.
+You'll also get `build/vgcplayer_streams_icepalace.ssd`, that plays
+Beyond The Ice Palace (David Whittaker) using the stream-oriented VGC
+player. The music data is 31 KB, occupying 2 sideways RAM banks and a
+bit of main RAM.
 
 A Windows-friendlier build process may follow...

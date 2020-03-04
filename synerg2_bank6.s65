@@ -1,8 +1,0 @@
-*=$8000
-synerg2_stream2:
-                .binary "build/SYNERG2.streams.2.vgc"
-synerg2_stream5:
-                .binary "build/SYNERG2.streams.5.vgc"
-                .cerror *>$c000,"bank 6 overflow"
-
-                

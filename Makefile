@@ -38,36 +38,35 @@ build:
 	$(PYTHON) $(BEEB_BIN)/ssd_extract.py -o $(BUILD)/ $(BUILD)/vgcplayer.ssd
 	$(SHELLCMD) copy-file $(BUILD)/vgcplayer/0/\$$.vgmplay $(BEEB)/
 	$(SHELLCMD) copy-file $(BUILD)/vgcplayer/0/\$$.vgmplay.inf $(BEEB)/
+
 	$(MAKE) $(BUILD)/U_LOADER.vgc
-	$(MAKE) $(BUILD)/U_LOADER.streams.vgc
-	$(MAKE) $(BUILD)/SYNERG2.streams.vgc
-	$(MAKE) $(BUILD)/icepalace.streams.vgc
-	$(MAKE) $(BUILD)/u_menu.streams.vgc
+	$(MAKE) $(BUILD)/icepalace.vgc
+	$(MAKE) $(BUILD)/VE3.vgc
+
+	$(PYTHON) submodules/vgm-packer/vgcfit.py -o $(BUILD)/icepalace $(BUILD)/icepalace.vgc --banks 45
+
+	$(SHELLCMD) copy-file $(BUILD)/icepalace.4.dat $(BEEB)/4.ICE
+	$(SHELLCMD) copy-file $(BUILD)/icepalace.5.dat $(BEEB)/5.ICE
+
+	$(PYTHON) submodules/vgm-packer/vgcfit.py -o $(BUILD)/ve3 $(BUILD)/ve3.vgc --banks 45
+
+	$(SHELLCMD) copy-file $(BUILD)/VE3.4.dat $(BEEB)/4.VE3
+	$(SHELLCMD) copy-file $(BUILD)/VE3.5.dat $(BEEB)/5.VE3
+
 	$(MAKE) _assemble SRC=vgcplayer_test BBC=vgc
-	$(MAKE) _assemble SRC=synerg2_bank4 BBC=syn2_4
-	$(MAKE) _assemble SRC=synerg2_bank5 BBC=syn2_5
-	$(MAKE) _assemble SRC=synerg2_bank6 BBC=syn2_6
-	$(MAKE) _assemble SRC=synerg2_bank7 BBC=syn2_7
-	$(MAKE) _assemble SRC=synerg2_main BBC=syn2_m
 
-	$(MAKE) _assemble SRC=icepalace_bank4 BBC=ice_4
-	$(MAKE) _assemble SRC=icepalace_bank5 BBC=ice_5
+	$(MAKE) _assemble SRC=vgcplayer_icepalace BBC=ice
 
-	$(MAKE) _assemble SRC=vgcplayer_streams_synerg2 BBC=syn2
+	$(MAKE) _assemble SRC=vgcplayer_VE3 BBC=ve3
 
-	$(MAKE) _assemble SRC=vgcplayer_streams_icepalace BBC=ice
+	$(PYTHON) $(BEEB_BIN)/ssd_create.py -v -o $(BUILD)/vgm_player_test.ssd $(BEEB)/@.VGC $(BEEB)/$$.vgmplay --build "*LOAD VGMPLAY" --build "*RUN @.VGC"
 
-	$(PYTHON) $(BEEB_BIN)/ssd_create.py -o $(BUILD)/vgm_player_test.ssd $(BEEB)/@.* $(BEEB)/$$.vgmplay --build "*LOAD VGMPLAY" --build "*RUN @.VGC"
+	$(PYTHON) $(BEEB_BIN)/ssd_create.py -v -o $(BUILD)/vgcplayer_icepalace.ssd $(BEEB)/4.ICE $(BEEB)/5.ICE $(BEEB)/$$.VGMPLAY $(BEEB)/@.ICE --build "*SRLOAD 4.ICE 8000 4 Q" --build "*SRLOAD 5.ICE 8000 5 Q" --build "*LOAD VGMPLAY" --build "*RUN @.ICE"
 
-	$(PYTHON) $(BEEB_BIN)/ssd_create.py -o $(BUILD)/vgcplayer_streams_synerg2.ssd $(BEEB)/@.* $(BEEB)/$$.vgmplay --build "*SRLOAD @.syn2_4 8000 4 Q" --build "*SRLOAD @.syn2_5 8000 5 Q" --build "*SRLOAD @.syn2_6 8000 6 Q" --build "*SRLOAD @.syn2_7 8000 7 Q" --build "*LOAD @.syn2_m" --build "*LOAD VGMPLAY" --build "*RUN @.syn2"
-
-	$(PYTHON) $(BEEB_BIN)/ssd_create.py -o $(BUILD)/vgcplayer_streams_icepalace.ssd $(BEEB)/@.* $(BEEB)/$$.vgmplay --build "*SRLOAD @.ice_4 8000 4 Q" --build "*SRLOAD @.ice_5 8000 5 Q" --build "*LOAD VGMPLAY" --build "*RUN @.ice"
+	$(PYTHON) $(BEEB_BIN)/ssd_create.py -v -o $(BUILD)/vgcplayer_VE3.ssd $(BEEB)/4.VE3 $(BEEB)/5.VE3 $(BEEB)/$$.VGMPLAY $(BEEB)/@.VE3 --build "*SRLOAD 4.VE3 8000 4 Q" --build "*SRLOAD 5.VE3 8000 5 Q" --build "*LOAD VGMPLAY" --build "*RUN @.VE3"
 
 $(BUILD)/%.vgc : ./vgms/%.vgm
 	$(PYTHON) submodules/vgm-packer/vgmpacker.py -o $@ $<
-
-$(BUILD)/%.streams.vgc $(BUILD)/%.streams.0.vgc $(BUILD)/%.streams.1.vgc $(BUILD)/%.streams.2.vgc $(BUILD)/%.streams.3.vgc $(BUILD)/%.streams.4.vgc $(BUILD)/%.streams.5.vgc $(BUILD)/%.streams.6.vgc $(BUILD)/%.streams.7.vgc  : ./vgms/%.vgm
-	$(PYTHON) submodules/vgm-packer/vgmpacker.py -s -o $@ $<
 
 ##########################################################################
 ##########################################################################
@@ -88,7 +87,8 @@ _assemble:
 ##########################################################################
 
 .PHONY:test_b2
-test_b2: SSD=vgcplayer_streams_icepalace
+test_b2: SSD=vgcplayer_VE3
+#test_b2: SSD=vgcplayer_icepalace
 #test_b2: SSD=vgm_player_test
 test_b2:
 	curl -G 'http://localhost:48075/reset/b2' --data-urlencode "config=Master 128 (MOS 3.20)"

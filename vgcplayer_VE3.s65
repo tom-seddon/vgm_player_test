@@ -1,7 +1,5 @@
                 .include "submodules/beeb/include/beeb.s65"
                 .include "build/vgcplayer_inc.s65"
-                .include "build/icepalace_bank4.sym"
-                .include "build/icepalace_bank5.sym"
 
 ;-------------------------------------------------------------------------
 
@@ -61,31 +59,7 @@ loop:
                 rts
 
 vgc:
-                .binary "build/ICEPALACE.streams.vgc"
-
-                .byte 4
-                .word icepalace_stream0
-
-                .byte 4
-                .word icepalace_stream1
-
-                .byte 5
-                .word icepalace_stream2
-
-                .byte 4
-                .word icepalace_stream3
-
-                .byte 4
-                .word icepalace_stream4
-
-                .byte 5
-                .word icepalace_stream5
-
-                .byte 5
-                .word icepalace_stream6
-
-                .byte 4
-                .word icepalace_stream7
+                .binary "build/VE3.toc.dat"
                 
                 .send code
 
